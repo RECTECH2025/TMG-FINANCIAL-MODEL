@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TMG Financial Model | Ricaurte Energy Capital</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8f9fa;
+      color: #1a1a1a;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      padding: 30px;
+      background: #1a3a5f;
+      color: white;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    h1, .subtitle { margin: 0; }
+    h1 { font-size: 28px; }
+    .subtitle { opacity: 0.9; font-size: 16px; }
+
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tab-nav button {
+      padding: 10px 15px;
+      border: none;
+      background: #e0e7ff;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .tab-nav button.active {
+      background: #2c5b87;
+      color: white;
+    }
+
+    .sheet {
+      display: none;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .sheet.active { display: block; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #ddd;
+      white-space: nowrap;
+    }
+    th {
+      background: #f0f5ff;
+      color: #1a3a5f;
+      position: sticky;
+      top: 0;
+    }
+    input {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .input-cell {
+      background: #e8f4fd !important;
+    }
+    .highlight {
+      background: #fffacd;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-weight: 500;
+    }
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <header>
+      <h1>Tungsten Metals Group (TMG)</h1>
+      <p class="subtitle">Interactive Financial Model | Acquisition at $18M USD | $35M CAPEX Commitment</p>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tab-nav">
+      <button class="tab-button active" data-tab="assumptions">Assumptions</button>
+      <button class="tab-button" data-tab="volume">Volume Schedule</button>
+      <button class="tab-button" data-tab="pl">P&L Forecast</button>
+      <button class="tab-button" data-tab="depr">Depreciation</button>
+      <button class="tab-button" data-tab="debt">Debt Schedule</button>
+      <button class="tab-button" data-tab="wc">WC Schedule</button>
+      <button class="tab-button" data-tab="is">Income Statement</button>
+      <button class="tab-button" data-tab="bs">Balance Sheet</button>
+      <button class="tab-button" data-tab="cfs">Cash Flow Stmt</button>
+      <button class="tab-button" data-tab="dashboard">Dashboard</button>
+    </div>
+
+    <!-- ASSUMPTIONS -->
+    <div class="sheet active" id="assumptions">
+      <h2>🔧 Assumptions</h2>
+      <table id="assumptions-table">
+        <tr><th>Item</th><th>Value</th><th>Units</th></tr>
+        <tr><td>FeW Price ($/kg W)</td><td class="input-cell" contenteditable="true">79</td><td>$/kg</td></tr>
+        <tr><td>Concentrate Cost ($/kg W)</td><td class="input-cell" contenteditable="true">38</td><td>$/kg</td></tr>
+        <tr><td>SG&A (% Revenue)</td><td class="input-cell" contenteditable="true">7</td><td>%</td></tr>
+        <tr><td>Fixed OPEX ($K/qtr)</td><td class="input-cell" contenteditable="true">500</td><td>$K</td></tr>
+        <tr><td>Debt Interest Rate</td><td class="input-cell" contenteditable="true">8</td><td>%</td></tr>
+        <tr><td>Tax Rate</td><td class="input-cell" contenteditable="true">15</td><td>%</td></tr>
+        <tr><td>Discount Rate (WACC)</td><td class="input-cell" contenteditable="true">10</td><td>%</td></tr>
+        <tr><td>Utilization Rate</td><td class="input-cell" contenteditable="true">90</td><td>%</td></tr>
+        <tr><td>AR Days</td><td class="input-cell" contenteditable="true">45</td><td>days</td></tr>
+        <tr><td>Inventory Days</td><td class="input-cell" contenteditable="true">60</td><td>days</td></tr>
+        <tr><td>AP Days</td><td class="input-cell" contenteditable="true">30</td><td>days</td></tr>
+      </table>
+    </div>
+
+    <!-- VOLUME SCHEDULE -->
+    <div class="sheet" id="volume">
+      <h2>📊 Volume Schedule (Quarterly, t)</h2>
+      <table id="volume-table"></table>
+    </div>
+
+    <!-- P&L FORECAST -->
+    <div class="sheet" id="pl">
+      <h2>📈 P&L Forecast ($'000)</h2>
+      <table id="pl-table"></table>
+    </div>
+
+    <!-- DEPRECIATION -->
+    <div class="sheet" id="depr">
+      <h2>📉 Depreciation Schedule ($'000)</h2>
+      <table id="depr-table"></table>
+    </div>
+
+    <!-- DEBT SCHEDULE -->
+    <div class="sheet" id="debt">
+      <h2>💳 Debt Schedule ($'000)</h2>
+      <table id="debt-table"></table>
+    </div>
+
+    <!-- WC SCHEDULE -->
+    <div class="sheet" id="wc">
+      <h2>🏦 Working Capital ($'000)</h2>
+      <table id="wc-table"></table>
+    </div>
+
+    <!-- INCOME STATEMENT -->
+    <div class="sheet" id="is">
+      <h2>📑 Income Statement ($'000)</h2>
+      <table id="is-table"></table>
+    </div>
+
+    <!-- BALANCE SHEET -->
+    <div class="sheet" id="bs">
+      <h2>📘 Balance Sheet ($'000)</h2>
+      <table id="bs-table"></table>
+    </div>
+
+    <!-- CASH FLOW STATEMENT -->
+    <div class="sheet" id="cfs">
+      <h2>💵 Cash Flow Statement ($'000)</h2>
+      <table id="cfs-table"></table>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="sheet" id="dashboard">
+      <h2>🎯 Dashboard</h2>
+      <div class="highlight">
+        <strong>Total Investment:</strong> $53M USD ($18M Acquisition + $35M CAPEX)<br>
+        <strong>NPV:</strong> <span id="npv">$0</span><br>
+        <strong>Annual IRR:</strong> <span id="irr">0%</span><br>
+        <strong>Payback Period:</strong> <span id="payback">N/A</span><br>
+        <strong>2028 EBITDA:</strong> <span id="ebitda2028">$0K</span>
+      </div>
+    </div>
+
+    <footer>
+      © 2025 Ricaurte Energy Capital. For Qualified Investors Only.<br>
+      Based on Investment Memorandum REC Sept 2025, TMG Annual Report 2024, and Pro Forma Model.<br>
+      Not an offer to sell securities.
+    </footer>
+
+  </div>
+
+  <script>
+    // Global Variables
+    const quarters = Array.from({length: 22}, (_, i) => {
+      const d = new Date(2025, 6 + (i * 3)); // Start Q3 2025
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    });
+
+    let assumptions = {};
+    let volumeData = [];
+    let plData = [];
+    let deprData = [];
+    let debtData = [];
+    let wcData = [];
+    let isData = [];
+    let bsData = [];
+    let cfsData = [];
+
+    // Initialize Tables
+    function initTables() {
+      // Volume Table
+      const volTable = document.getElementById('volume-table');
+      volTable.innerHTML = '<tr><th>Quarter</th><th>FeW</th><th>Powder</th><th>Bars</th><th>Intermediate</th></tr>';
+      volumeData = quarters.map(q => {
+        const y = q.split('-')[0];
+        const m = q.split('-')[1];
+        let row = { quarter: q, few: 0, powder: 0, bars: 0, intermed: 0 };
+        if (+y === 2025 && +m > 6) row.few = 225;
+        if (+y === 2026) row.few = 225 + (Math.floor((+m - 7)/3) >= 4 ? 225 : 0); // 450 later
+        if (+y === 2027 || +y > 2027) {
+          row.few = 450;
+          row.powder = 75;
+          row.bars = 75;
+          row.intermed = 37.5;
+        }
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${q}</td><td>${row.few}</td><td>${row.powder}</td><td>${row.bars}</td><td>${row.intermed}</td>`;
+        volTable.appendChild(tr);
+        return row;
+      });
+    }
+
+    // Update All Sheets
+    function updateModel() {
+      getAssumptions();
+      calculatePL();
+      calculateDepreciation();
+      calculateDebt();
+      calculateWC();
+      calculateIS();
+      calculateBS();
+      calculateCFS();
+      updateDashboard();
+    }
+
+    function getAssumptions() {
+      const cells = document.querySelectorAll('.input-cell');
+      assumptions = {
+        fePrice: parseFloat(cells[0].textContent) || 79,
+        concCost: parseFloat(cells[1].textContent) || 38,
+        sgA: parseFloat(cells[2].textContent) / 100 || 0.07,
+        fixedOPEX: parseFloat(cells[3].textContent) || 500,
+        intRate: parseFloat(cells[4].textContent) / 100 || 0.08,
+        taxRate: parseFloat(cells[5].textContent) / 100 || 0.15,
+        discRate: parseFloat(cells[6].textContent) / 100 || 0.10,
+        arDays: parseFloat(cells[8].textContent) || 45,
+        invDays: parseFloat(cells[9].textContent) || 60,
+        apDays: parseFloat(cells[10].textContent) || 30
+      };
+    }
+
+    function calculatePL() {
+      const table = document.getElementById('pl-table');
+      table.innerHTML = '<tr><th>Quarter</th><th>Revenue</th><th>COGS</th><th>OPEX</th><th>EBITDA</th></tr>';
+      plData = [];
+
+      volumeData.forEach(v, i) => {
+        const wContent = v.few * 0.75 + v.powder * 1.0 + v.bars * 1.0 + v.intermed * 0.7;
+        const revenue = wContent * 1000 * assumptions.fePrice;
+        const cogs = wContent * 1000 * assumptions.concCost;
+        const opex = (revenue * assumptions.sgA) + assumptions.fixedOPEX;
+        const ebitda = revenue - cogs - opex;
+
+        plData.push({ revenue, cogs, opex, ebitda });
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${quarters[i]}</td>
+          <td>${Math.round(revenue / 1000)}</td>
+          <td>${Math.round(cogs / 1000)}</td>
+          <td>${Math.round(opex / 1000)}</td>
+          <td>${Math.round(ebitda / 1000)}</td>
+        `;
+        table.appendChild(tr);
+      });
+    }
+
+    function calculateDepreciation() {
+      const capexAdditions = [1250, 11500, 13500, 4750, 1000, 3000, ...Array(16).fill(0)];
+      const table = document.getElementById('depr-table');
+      table.innerHTML = '<tr><th>Quarter</th><th>CAPEX Addition</th><th>Depreciation</th></tr>';
+      deprData = [];
+
+      capexAdditions.forEach((add, i) => {
+        const depr = add / 10 / 4; // Straight-line over 10
